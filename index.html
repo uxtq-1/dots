@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Interactive Dots with Random Colors and Background</title>
+  <title>Interactive Dots with Mouse Attraction and Random Colors</title>
   <style>
-    body { margin: 0; overflow: hidden; }
+    body { margin: 0; overflow: hidden; background: #000; }
     canvas { display: block; }
   </style>
 </head>
@@ -39,32 +39,33 @@
         this.radius = 2;
       }
       update() {
-        // Attract the dot towards the mouse if it's close enough.
+        // If the mouse is near, adjust velocity to slowly attract the dot.
         if (mouse.x && mouse.y) {
           let dx = mouse.x - this.x;
           let dy = mouse.y - this.y;
           let dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < 100) {
+            // A small factor to gently attract dots toward the mouse.
             this.vx += dx * 0.0005;
             this.vy += dy * 0.0005;
           }
         }
         this.x += this.vx;
         this.y += this.vy;
-        // Bounce off the canvas edges.
+        // Bounce off canvas edges.
         if (this.x < 0 || this.x > width) this.vx = -this.vx;
         if (this.y < 0 || this.y > height) this.vy = -this.vy;
       }
       draw() {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        // Use a random color for each dot on every frame.
+        // Set a random color every time the dot is drawn.
         ctx.fillStyle = getRandomColor();
         ctx.fill();
       }
     }
 
-    // Create an array of dots with random positions and velocities.
+    // Create multiple dots with random positions and velocities.
     const dots = [];
     const numDots = 100;
     for (let i = 0; i < numDots; i++) {
@@ -94,14 +95,16 @@
       }
     }
 
-    // Draw the mouse pointer as a yellow dot and connect it with nearby dots.
+    // Draw a dot for the mouse and connect it to nearby dots.
     function connectMouse() {
       if (mouse.x && mouse.y) {
+        // Draw the mouse pointer as a yellow dot.
         ctx.beginPath();
         ctx.arc(mouse.x, mouse.y, 3, 0, Math.PI * 2);
         ctx.fillStyle = 'yellow';
         ctx.fill();
 
+        // Connect the mouse pointer with nearby dots.
         dots.forEach(dot => {
           let dx = dot.x - mouse.x;
           let dy = dot.y - mouse.y;
@@ -120,10 +123,7 @@
 
     // Main animation loop.
     function animate() {
-      // Instead of clearing the canvas with a fixed color, fill it with a random background color.
-      ctx.fillStyle = getRandomColor();
-      ctx.fillRect(0, 0, width, height);
-
+      ctx.clearRect(0, 0, width, height);
       dots.forEach(dot => {
         dot.update();
         dot.draw();
